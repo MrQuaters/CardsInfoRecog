@@ -22,15 +22,24 @@ _corners DataExtractor::_corner_marker_pos_detector(const cv::Mat& g){
 
 	cv::Mat dmat = g(cv::Rect2i(cv::Point2i(0,0), cv::Point2i(imgparams.MARKER_WHITESPACE_WIDTH_PIX, imgparams.MARKER_WHITESPACE_HEIGHT_PIX)));
 	auto k = _mfinder(dmat);
-	cv::circle(dmat, k, 3, cv::Scalar(255));
-	cv::imshow("dfd", dmat);
+	crn.lt = k;
 
 	dmat = g(cv::Rect2i(cv::Point2i(0, g.rows - 1 - imgparams.MARKER_WHITESPACE_HEIGHT_PIX), cv::Point2i(imgparams.MARKER_WHITESPACE_WIDTH_PIX, g.rows-1)));
 	k = _mfinder(dmat);
-	cv::circle(dmat, k, 3, cv::Scalar(255));
-	cv::imshow("dfd1", dmat);
+	k.y += g.rows - 1 - imgparams.MARKER_WHITESPACE_HEIGHT_PIX;
+	crn.lb = k;
 
-	cv::waitKey();
+	dmat = g(cv::Rect2i(cv::Point2i(g.cols - 1 - imgparams.MARKER_WHITESPACE_WIDTH_PIX, 0), cv::Point2i(g.cols - 1, imgparams.MARKER_WHITESPACE_HEIGHT_PIX)));
+	k = _mfinder(dmat);
+	k.x += g.cols - 1 - imgparams.MARKER_WHITESPACE_WIDTH_PIX;
+	crn.rt = k;
+
+	dmat = g(cv::Rect2i(cv::Point2i(g.cols - 1 - imgparams.MARKER_WHITESPACE_WIDTH_PIX, g.rows - 1 - imgparams.MARKER_WHITESPACE_HEIGHT_PIX), cv::Point2i(g.cols - 1, g.rows - 1)));
+	k = _mfinder(dmat);
+	k.x += g.cols - 1 - imgparams.MARKER_WHITESPACE_WIDTH_PIX;
+	k.y += g.rows - 1 - imgparams.MARKER_WHITESPACE_HEIGHT_PIX;
+	crn.rb = k;
+
 	return crn;
 }
 
@@ -40,19 +49,21 @@ cv::Point2i DataExtractor::_mfinder(const cv::Mat& k) {
 	cv::Point2i rpt;
 
 	auto sze = imgparams.MARKER_WIDTH_PIX;
-	if (sze % 2 == 0) sze++;
-	int bpy = sze / 2;
+	if (sze % 2 == 0) sze++; //make marker width odd
 
-	int *rmt = new int[((int)(k.rows)) * k.cols];
+	int bpy = sze / 2; //marker window center
+
+	int *rmt = new int[(size_t)(k.rows) * k.cols];
 	for (int i = 0; i < k.rows * k.cols; ++i) rmt[i] = 0;
 
 	int ctrb = 0;
 	for (int i = 0; i < sze; ++i) {
 		for (int j = 0; j < sze; ++j) {
-			if (k.at<uchar>(j, i) == 0) ++ctrb;
+			if (k.at<uchar>(j, i) == 0) ++ctrb; //start section EEp(x,y)
 		}
 	}
 
+	//counting values for all pixels in area sze*sze for each pixel in xe[bpy; cols-bpy), ye[bpy, rows -bpy)
 	for (int i = sze; i < k.rows;i++) {
 		int bpx = sze / 2;
 		int ctr = ctrb;
@@ -79,7 +90,7 @@ cv::Point2i DataExtractor::_mfinder(const cv::Mat& k) {
 		ctrb = ctrb - yb + ye;
 		++bpy;
 	}
-
+	//finding max val
 	int max = 0;
 	for (int i = 0; i < k.rows; ++i) {
 		for (int j = 0; j < k.cols; ++j) {
@@ -88,6 +99,8 @@ cv::Point2i DataExtractor::_mfinder(const cv::Mat& k) {
 			}
 		}	
 	}
+
+	//counting center masses
 	int spx = 0, spy = 0, maxescount = 0;
 	for (int i = 0; i < k.rows; ++i) {
 		for (int j = 0; j < k.cols; ++j) {
@@ -98,10 +111,11 @@ cv::Point2i DataExtractor::_mfinder(const cv::Mat& k) {
 			}
 		}
 	}
-
 	rpt.x = spx/maxescount;
 	rpt.y = spy/maxescount;
-	delete[] rmt;
+
+	delete[] rmt;//free resources
+
 	return rpt;
 }
 
@@ -114,8 +128,12 @@ std::vector<extrdata> rtr::DataExtractor::data_extract(const cv::Mat& t){
 
 	_gateway(vm); // using gateway to prepare image
 	if (imgparams.IMAGE_TYPE != SCANED_IMAGE) _shadow_remover(vm); // if givven image is not scanned, using shadow remover for better quality
-	_corner_marker_pos_detector(vm);
-
+	auto r = _corner_marker_pos_detector(vm);
+	cv::circle(vm, r.lb, 12, cv::Scalar(255));
+	cv::circle(vm, r.rb, 12, cv::Scalar(255));
+	cv::circle(vm, r.rt, 4, cv::Scalar(255));
+	cv::circle(vm, r.lt, 4, cv::Scalar(255));
+	cv::imwrite("afd.jpg", vm);
 	return std::vector<extrdata>();
 }
 
