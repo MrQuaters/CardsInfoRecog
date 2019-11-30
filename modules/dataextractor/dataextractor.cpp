@@ -17,6 +17,33 @@ void DataExtractor::_binarise(cv::Mat& t){
 	cv::threshold(t, t, 40, 255, cv::THRESH_BINARY);
 }
 
+void DataExtractor::_geom_restore(cv::Mat& g){
+
+	int ctl, ctr;
+	int gt = imgparams.GEOM_MARKER_POS_Y_PIX - imgparams.MARKER_WHITESPACE_HEIGHT_PIX / 2;
+	if (gt < 0) gt = 0;
+	int gt_ = imgparams.GEOM_MARKER_POS_Y_PIX + imgparams.MARKER_WHITESPACE_HEIGHT_PIX / 2;
+	if (gt_ > g.rows - 1) gt_ = g.rows-1;
+
+	cv::Mat dmat = g(cv::Rect2i(cv::Point2i(0, gt), cv::Point2i(imgparams.MARKER_WHITESPACE_WIDTH_PIX, gt_)));
+	auto kl = _mfinder(dmat, &ctl);
+
+	int xt = g.cols - 1 - imgparams.MARKER_WHITESPACE_WIDTH_PIX;
+	if (xt < 0) xt = 0;
+	gt = g.rows - imgparams.GEOM_MARKER_POS_Y_PIX - imgparams.MARKER_WHITESPACE_HEIGHT_PIX / 2;
+	if (gt < 0) gt = 0;
+	gt_ = g.rows - imgparams.GEOM_MARKER_POS_Y_PIX + imgparams.MARKER_WHITESPACE_HEIGHT_PIX / 2;
+	if (gt_ < 0) gt_ = 0;
+
+	dmat = g(cv::Rect2i(cv::Point2i(xt , gt), cv::Point2i(g.cols - 1, gt_)));
+
+	auto kr = _mfinder(dmat, &ctr);
+
+	if (ctr > ctl) cv::rotate(g, g, cv::ROTATE_180);
+
+}
+
+
 _corners DataExtractor::_corner_marker_pos_detector(const cv::Mat& g){
 	_corners crn;
 
@@ -45,7 +72,7 @@ _corners DataExtractor::_corner_marker_pos_detector(const cv::Mat& g){
 
 
 
-cv::Point2i DataExtractor::_mfinder(const cv::Mat& k) {
+cv::Point2i DataExtractor::_mfinder(const cv::Mat& k, int* ct) {
 	cv::Point2i rpt;
 
 	auto sze = imgparams.MARKER_WIDTH_PIX;
@@ -114,6 +141,8 @@ cv::Point2i DataExtractor::_mfinder(const cv::Mat& k) {
 	rpt.x = spx/maxescount;
 	rpt.y = spy/maxescount;
 
+	if (ct != nullptr) *ct = max;
+
 	delete[] rmt;//free resources
 
 	return rpt;
@@ -128,6 +157,7 @@ std::vector<extrdata> rtr::DataExtractor::data_extract(const cv::Mat& t){
 
 	_gateway(vm); // using gateway to prepare image
 	if (imgparams.IMAGE_TYPE != SCANED_IMAGE) _shadow_remover(vm); // if givven image is not scanned, using shadow remover for better quality
+	_geom_restore(vm);
 	auto r = _corner_marker_pos_detector(vm);
 	cv::circle(vm, r.lb, 12, cv::Scalar(255));
 	cv::circle(vm, r.rb, 12, cv::Scalar(255));

@@ -14,5 +14,6 @@ rtr::TestImgTemplate::TestImgTemplate(){
 	MARKER_WHITESPACE_WIDTH_PIX = cm_to_pix(1.6);
 	MARKER_WIDTH_PIX = cm_to_pix(0.61);
 	IMAGE_TYPE = SCANED_IMAGE;
+	GEOM_MARKER_POS_Y_PIX = cm_to_pix(11.684);
 }
 

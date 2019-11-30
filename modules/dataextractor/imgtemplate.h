@@ -13,7 +13,7 @@ public:
 	int MARKER_WHITESPACE_WIDTH_PIX;
 	int MARKER_WHITESPACE_HEIGHT_PIX;
 	int MARKER_WIDTH_PIX;
-	int GEOM_MARKER_POS_X_PIX, GEOM_MARKER_POS_Y_PIX;
+	int GEOM_MARKER_POS_Y_PIX; // center of geometrical marker pos in pix
 	int IMAGE_TYPE;
 };
 
