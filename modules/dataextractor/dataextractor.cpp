@@ -16,7 +16,6 @@ void DataExtractor::_binarise(cv::Mat& t){
 }
 
 void DataExtractor::_geom_restore(cv::Mat& g){
-
 	int ctl, ctr;
 	int gt = imgparams.GEOM_MARKER_POS_Y_PIX - imgparams.MARKER_WHITESPACE_HEIGHT_PIX / 2;
 	if (gt < 0) gt = 0;
@@ -34,11 +33,8 @@ void DataExtractor::_geom_restore(cv::Mat& g){
 	if (gt_ < 0) gt_ = 0;
 
 	dmat = g(cv::Rect2i(cv::Point2i(xt , gt), cv::Point2i(g.cols - 1, gt_)));
-
 	auto kr = _mfinder(dmat, &ctr);
-
 	if (ctr > ctl) cv::rotate(g, g, cv::ROTATE_180);
-
 }
 
 
@@ -174,9 +170,9 @@ std::vector<extrdata> rtr::DataExtractor::data_extract(const cv::Mat& t){
 	cv::Mat vm = t;
 	_gateway(vm); // using gateway to prepare image
 	_binarise(vm);//binarisation for finding markers
-	_geom_restore(vm);// restoring position in space
 	auto r = _corner_marker_pos_detector(vm);//finding corner markers
 	_geom_wrap_prespective(vm, r);//wraping perspective
+	_geom_restore(vm);// restoring position in space
 	cv::imwrite("afd" + std::to_string(gdsf++)+".jpg", vm);
 	return std::vector<extrdata>();
 }
