@@ -226,6 +226,7 @@ int _pointfnd(int* g, int ct, int thresh) {
 
 extrdata DataExtractor::_data_extract(cv::Mat& mt, const data_for_detect& d){
 	cv::Rect2i r;
+	
 	r.x = d.DATA_POS_X_PIX - imgparams.FREE_ZONE_PIX / 2; 
 	r.y = d.DATA_POS_Y_PIX - imgparams.FREE_ZONE_PIX / 2;
 	r.width = d.R_PARAMS.R_COUNTS * d.R_PARAMS.X_SIZE + (d.R_PARAMS.R_COUNTS-1) * d.R_PARAMS.RECT_MARGIN + imgparams.FREE_ZONE_PIX;
@@ -314,7 +315,7 @@ extrdata DataExtractor::_data_extract(cv::Mat& mt, const data_for_detect& d){
 			yb = 0;
 		}
 		if (ye > mtn.rows) {
-			yb += ye - mtn.rows;
+			yb -= ye - mtn.rows;
 			ye = mtn.rows;
 			if (yb < 0) yb = 0;
 		}
@@ -348,6 +349,7 @@ std::vector<extrdata> rtr::DataExtractor::data_extract(const cv::Mat& t){
 	_geom_restore(vm);// restoring position in space
 
 	if (imgparams.setted_to_250) _resize(vm);
+	
 
 #ifdef MODULAR_TEST_DATAEXTRACTOR
 vm.copyTo(modular_test_matrix);

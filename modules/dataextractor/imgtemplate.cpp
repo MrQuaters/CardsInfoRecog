@@ -19,15 +19,15 @@ rtr::TestImgTemplate::TestImgTemplate(int dpi){
 	IMAGE_TYPE = SCANED_IMAGE;
 	LETTER_WIDTH_PIX = cm_to_pix(0.05);
 	GEOM_MARKER_POS_Y_PIX = cm_to_pix(10.5);
-	FREE_ZONE_PIX = cm_to_pix_s(0.2614);
+	FREE_ZONE_PIX = cm_to_pix_s(0.28);
 	MARKER_TO_MARKER_WIDTH_PIX = cm_to_pix(20.2184);
 	MARKER_TO_MARKER_HEIGHT_PIX = cm_to_pix(13.818);
 	MARKER_TO_MARKER_HEIGHT_PIX_TO_250dpi = cm_to_pix_s(13.818);
 	MARKER_TO_MARKER_WIDTH_PIX_TO_250dpi = cm_to_pix_s(20.2184);
 	setted_to_250 = (DPI > 250) ? true : false;
 	d_data = {//change for adaptive count in normal class
-		data_for_detect(cm_to_pix_s(3.23),cm_to_pix_s(4.6), 11, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "TELEPHON"),
-		data_for_detect(cm_to_pix_s(3.23),cm_to_pix_s(3.6808), 26, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_TEXT, "otc")
+		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(4.39), 11, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "TELEPHON"),
+		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(3.5108), 26, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_TEXT, "otc")
 	};
 }
 
