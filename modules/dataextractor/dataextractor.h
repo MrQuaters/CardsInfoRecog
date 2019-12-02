@@ -51,4 +51,9 @@ public:
 };
 
 
+void _dot_deleter(cv::Mat& a, int kernelbase, int corebase);
+//
+//
+//
+
 }

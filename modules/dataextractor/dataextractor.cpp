@@ -290,10 +290,13 @@ extrdata DataExtractor::_data_extract(cv::Mat& mt, const data_for_detect& d){
 		for (int j = 0; j < mtn.rows; ++j) {
 			gy[j] = 0;
 		}
-
-		int begp = xpicslist[i] - d.R_PARAMS.X_SIZE / 2;
-		if (begp < 0) begp = 0;
 		int endp = xpicslist[i] + d.R_PARAMS.X_SIZE / 2;
+		int begp = xpicslist[i] - d.R_PARAMS.X_SIZE / 2;
+		if (begp < 0) { 
+			endp -= begp;
+			begp = 0; 
+		}
+		
 		if (endp > mtn.cols ) endp = mtn.cols;
 
 		int maxvy = 0;
@@ -353,7 +356,7 @@ std::vector<extrdata> rtr::DataExtractor::data_extract(const cv::Mat& t){
 	_geom_restore(vm);// restoring position in space
 
 	if (imgparams.setted_to_250) _resize(vm);
-	
+	_dot_deleter(vm, 1, 10);
 
 #ifdef MODULAR_TEST_DATAEXTRACTOR
 vm.copyTo(modular_test_matrix);
@@ -373,5 +376,30 @@ vm.copyTo(modular_test_matrix);
 }
 
 
+
+void _dot_deleter(cv::Mat& a, int kernelbase, int corebase){
+	cv::Mat g;
+	a.copyTo(g);
+	for (int i = 0; i < g.rows - kernelbase * 2 - corebase; ++i) {
+		for (int j = 0; j < g.cols - kernelbase * 2 - corebase; ++j) {
+			unsigned int t = 0;
+			for (int k = 0; k < kernelbase * 2 + corebase; ++k) {
+					for(int o =0; o <kernelbase; ++o){
+					t += 255 - g.at<uchar>(i +o, j + k);
+					t += 255 - g.at<uchar>(i +k, j + o);
+					t += 255 - g.at<uchar>(i + kernelbase * 2 + corebase - 1 - o, j + k);
+					t += 255 - g.at<uchar>(i + k , j + kernelbase * 2 + corebase - 1- o);
+				}
+			}
+			if (t == 0) {
+				for (int k = 0; k < corebase; ++k) {
+					for (int l = 0; l < corebase; ++l) {
+						a.at<uchar>(i + kernelbase + k, j + kernelbase + l) = 255;
+					}
+				}
+			}
+		}
+	}
+}
 
 }

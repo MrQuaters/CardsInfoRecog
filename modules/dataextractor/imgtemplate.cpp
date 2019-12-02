@@ -34,7 +34,11 @@ rtr::TestImgTemplate::TestImgTemplate(int dpi){
 		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(7.45), 26, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_TEXT, "cty", cm_to_pix_s(0.71) / 3),
 		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(8.33), 26, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_TEXT, "rayon", cm_to_pix_s(0.71) / 3),
 		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(9.21), 26, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_TEXT, "street", cm_to_pix_s(0.71) / 3),
-		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(10.65), 4, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_TEXT, "house", cm_to_pix_s(0.71) / 3)
+		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(10.65), 4, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "house", cm_to_pix_s(0.71) / 3),
+		data_for_detect(cm_to_pix_s(6.40),cm_to_pix_s(10.65), 4, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "korp", cm_to_pix_s(0.71) / 3),
+		data_for_detect(cm_to_pix_s(9.70),cm_to_pix_s(10.65), 4, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "stre", cm_to_pix_s(0.71) / 3),
+		data_for_detect(cm_to_pix_s(13.0),cm_to_pix_s(10.65), 4, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "korp", cm_to_pix_s(0.71) / 3),
+		data_for_detect(cm_to_pix_s(16.3),cm_to_pix_s(10.65), 7, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "korp", cm_to_pix_s(0.71) / 3)
 	};
 }
 
