@@ -199,7 +199,7 @@ void DataExtractor::_final_binarisation(cv::Mat& t){
 }
 
 
-int _pointfnd(int* g, int ct, int thresh) {
+int _pointfnd(int* g, int ct, int thresh, int sthresh = -1) {
 	int xmaxval = 0;
 	int xmax = 0;
 	unsigned long long summ = 0;
@@ -209,6 +209,9 @@ int _pointfnd(int* g, int ct, int thresh) {
 			xmaxval = g[j];
 			xmax = j;
 		}
+	}
+	if (sthresh != -1) {
+		if (sthresh >= summ) return -1;
 	}
 	summ /= 2;
 
@@ -251,6 +254,7 @@ extrdata DataExtractor::_data_extract(cv::Mat& mt, const data_for_detect& d){
 		xgmval = (xgmval > ctn) ? xgmval : ctn;
 		g[i] = ctn; 
 	}
+	if (xgmval < d.R_PARAMS.PIXEL_CONCENTRATE_THRESHOLD) xgmval = d.R_PARAMS.PIXEL_CONCENTRATE_THRESHOLD;
 	//finding center position of letters
 	int nxtpt = 0;
 	int ac = (imgparams.FREE_ZONE_PIX - d.R_PARAMS.RECT_MARGIN) / 2;

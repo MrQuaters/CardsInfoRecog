@@ -17,10 +17,11 @@ struct data_for_detect {
 		int X_SIZE, Y_SIZE; // letter window params in pix
 		int RECT_MARGIN;//margin between letters
 		int R_COUNTS;// letters count
+		int PIXEL_CONCENTRATE_THRESHOLD;// minEEp(xy) for check if box not empty
 	} R_PARAMS;
 	int DATA_TYPE;//data type need for next proccessing with neural network
 	std::string dname;
-	data_for_detect(int, int,  int, int, int, int, int, std::string);//fast set all params
+	data_for_detect(int, int,  int, int, int, int, int, std::string, int);//fast set all params
 };
 
 
