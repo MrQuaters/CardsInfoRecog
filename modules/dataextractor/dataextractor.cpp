@@ -401,13 +401,15 @@ void _dot_deleter(cv::Mat& a, int dotsize) {
 				t += 255 - g.at<uchar>(j +1+dotsize, i +k);
 				pos = i + k;
 			}
-
+			bool q = false;
 			if (t == 0) {
+				q = true;
 				for (int o = 0; o < dotsize; ++o)
 					for (int z = 0; z < dotsize; ++z)
 						a.at<uchar>(j + 1 + o, i + 1 + z) = 255;
 			}
-			i = ++pos;
+			if (q) i = --pos;
+			else i = ++pos;
 		}
 	}
 
