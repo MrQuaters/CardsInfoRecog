@@ -24,6 +24,7 @@ rtr::TestImgTemplate::TestImgTemplate(int dpi){
 	MARKER_TO_MARKER_HEIGHT_PIX = cm_to_pix(13.818);
 	MARKER_TO_MARKER_HEIGHT_PIX_TO_250dpi = cm_to_pix_s(13.818);
 	MARKER_TO_MARKER_WIDTH_PIX_TO_250dpi = cm_to_pix_s(20.2184);
+	MARKER_DOT_MAX_RADIUS_PIX = 10;
 	setted_to_250 = (DPI > 250) ? true : false;
 	d_data = {//change for adaptive count in normal class
 		data_for_detect(cm_to_pix_s(3.10),cm_to_pix_s(1.76), 26, cm_to_pix_s(0.55), cm_to_pix_s(0.71),cm_to_pix_s(0.12), IS_NUMBERS, "fam", cm_to_pix_s(0.71)/3),

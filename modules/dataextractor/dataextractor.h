@@ -7,6 +7,7 @@
 #include <ctime>
 #include "imgtemplate.h"
 #define MODULAR_TEST_DATAEXTRACTOR
+#define DATAEXTRACTOR_MAIN
 
 namespace rtr{
 
@@ -26,7 +27,7 @@ class DataExtractor {
 	
 	void _gateway(cv::Mat&); //takes Mat and convert it to format that DataExtractor takes 
 	void _binarise(cv::Mat&); // binarise image set 2 vals 0 and 255 
-	void _geom_restore(cv::Mat&); //find geometrical marker and restores true document position
+	bool _geom_restore(cv::Mat&); //find geometrical marker and restores true document position
 	_corners _corner_marker_pos_detector(const  cv::Mat&); //returning corner markers positions
 	cv::Point2i _mfinder(const cv::Mat&, int* ct = nullptr); // function for _corner_marker_pos_detector finding center mass max black pixelex in given mat(optimal alhorithm)
 	void _geom_wrap_prespective(cv::Mat&, _corners); // wraping perspective based on finded markers
@@ -47,11 +48,11 @@ public:
 	//taking image for setted template
 	//return massive with massive photoes with X_SIZE Y_SIZE max pixels for each letter. Empty matrix means that no letter has been found in the box
 	//also ech extrdata has the name setted in template, so u can recognize it on the next steps
-	std::vector<extrdata> data_extract(const cv::Mat&);
+	std::vector<extrdata> data_extract(cv::Mat&, bool t = false);
 };
 
 
-void _dot_deleter(cv::Mat& a, int kernelbase, int corebase);
+void _dot_deleter(cv::Mat& a, int dotsize);
 //
 //
 //

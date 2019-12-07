@@ -43,7 +43,7 @@ void DataExtractor::_binarise(cv::Mat& t){ //binirasing by OTSU thresholding
 	r.copyTo(t);
 }
 
-void DataExtractor::_geom_restore(cv::Mat& g){ //restoring geometry if no geom marker in setted position, should rotate image
+bool DataExtractor::_geom_restore(cv::Mat& g){ //restoring geometry if no geom marker in setted position, should rotate image
 	int ctl, ctr;
 	int gt = imgparams.GEOM_MARKER_POS_Y_PIX - imgparams.MARKER_WHITESPACE_HEIGHT_PIX / 2;
 	if (gt < 0) gt = 0;
@@ -62,7 +62,7 @@ void DataExtractor::_geom_restore(cv::Mat& g){ //restoring geometry if no geom m
 
 	dmat = g(cv::Rect2i(cv::Point2i(xt , gt), cv::Point2i(g.cols - 1, gt_)));
 	auto kr = _mfinder(dmat, &ctr);
-	if (ctr > ctl) cv::rotate(g, g, cv::ROTATE_180);
+	return (ctr > ctl);
 }
 
 
@@ -333,6 +333,7 @@ extrdata DataExtractor::_data_extract(cv::Mat& mt, const data_for_detect& d){
 #endif // MODULAR_TEST_DATAEXTRACTOR
 
 		auto f = mtn(cv::Rect(cv::Point(begp, yb), cv::Point(endp, ye)));
+		
 		cv::Mat r; f.copyTo(r);
 		ed.imgs.push_back(r);
 	}
@@ -347,16 +348,23 @@ extrdata DataExtractor::_data_extract(cv::Mat& mt, const data_for_detect& d){
 
 
 
-std::vector<extrdata> rtr::DataExtractor::data_extract(const cv::Mat& t){
+std::vector<extrdata> rtr::DataExtractor::data_extract(cv::Mat& t, bool dvt){
 	cv::Mat vm = t;
 	_gateway(vm); // using gateway to prepare image
 	_binarise(vm);//binarisation for finding markers
 	auto r = _corner_marker_pos_detector(vm);//finding corner markers
 	_geom_wrap_prespective(vm, r);//wraping perspective
-	_geom_restore(vm);// restoring position in space
+	if (dvt) _geom_wrap_prespective(t, r);
+	auto gr = _geom_restore(vm);// restoring position in space
+	
+	if(gr)  cv::rotate(vm, vm, cv::ROTATE_180);
+	if(gr&&dvt) cv::rotate(t, t, cv::ROTATE_180);
+	
 
 	if (imgparams.setted_to_250) _resize(vm);
-	_dot_deleter(vm, 1, 10);
+	if (imgparams.setted_to_250 && dvt) _resize(t);
+
+	if (imgparams.MARKER_DOT_MAX_RADIUS_PIX != -1) _dot_deleter(vm, imgparams.MARKER_DOT_MAX_RADIUS_PIX);
 
 #ifdef MODULAR_TEST_DATAEXTRACTOR
 vm.copyTo(modular_test_matrix);
@@ -377,29 +385,32 @@ vm.copyTo(modular_test_matrix);
 
 
 
-void _dot_deleter(cv::Mat& a, int kernelbase, int corebase){
+void _dot_deleter(cv::Mat& a, int dotsize) {
 	cv::Mat g;
 	a.copyTo(g);
-	for (int i = 0; i < g.rows - kernelbase * 2 - corebase; ++i) {
-		for (int j = 0; j < g.cols - kernelbase * 2 - corebase; ++j) {
-			unsigned int t = 0;
-			for (int k = 0; k < kernelbase * 2 + corebase; ++k) {
-					for(int o =0; o <kernelbase; ++o){
-					t += 255 - g.at<uchar>(i +o, j + k);
-					t += 255 - g.at<uchar>(i +k, j + o);
-					t += 255 - g.at<uchar>(i + kernelbase * 2 + corebase - 1 - o, j + k);
-					t += 255 - g.at<uchar>(i + k , j + kernelbase * 2 + corebase - 1- o);
-				}
+	for (int j = 0; j < a.rows - dotsize - 2; ++j) {
+		for (int i = 0; i < a.cols - dotsize - 2;) {
+			int t = 0;
+			int pos = i;
+			for (int k = 0; t == 0 && k < dotsize + 2; ++k) {
+				t = 255 - g.at<uchar>(j + k, i);
+				t += 255 - g.at<uchar>(j + k, i + 1 + dotsize);
 			}
+			for (int k = 0; t == 0 && k < dotsize + 2; ++k) {
+				t = 255 - g.at<uchar>(j , i +k);
+				t += 255 - g.at<uchar>(j +1+dotsize, i +k);
+				pos = i + k;
+			}
+
 			if (t == 0) {
-				for (int k = 0; k < corebase; ++k) {
-					for (int l = 0; l < corebase; ++l) {
-						a.at<uchar>(i + kernelbase + k, j + kernelbase + l) = 255;
-					}
-				}
+				for (int o = 0; o < dotsize; ++o)
+					for (int z = 0; z < dotsize; ++z)
+						a.at<uchar>(j + 1 + o, i + 1 + z) = 255;
 			}
+			i = ++pos;
 		}
 	}
+
 }
 
 }

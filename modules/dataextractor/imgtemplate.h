@@ -43,6 +43,7 @@ public:
 	int IMAGE_TYPE;//type of image not used
 	int LETTER_WIDTH_PIX;//font size not used
 	int FREE_ZONE_PIX; //min length y acsiss between 2 data to recognize
+	int MARKER_DOT_MAX_RADIUS_PIX; //if dots as d_data borders extractor can filter it if not need, set to -1
 	std::vector<data_for_detect> d_data;//data to extrarct
 };
 
